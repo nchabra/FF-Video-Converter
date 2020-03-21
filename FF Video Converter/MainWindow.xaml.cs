@@ -17,7 +17,7 @@ namespace FFVideoConverter
     {
         public static readonly string[] QUALITY = { "Best", "Very good", "Good", "Medium", "Low", "Very low" };
 
-        private static readonly string[] SUPPORTED_EXTENSIONS = { ".mkv", ".mp4", ".avi", "m4v", ".webm", ".m3u8" };
+        private static readonly string[] SUPPORTED_EXTENSIONS = { ".mkv", ".mp4", ".avi", "m4v", ".webm", ".m3u8", ".mov" };
         private FFmpegEngine ffmpegEngine = new FFmpegEngine();
         private readonly MethodRunner<TimeSpan> textBoxStartTextChangedMethodRunner;
         private MediaInfo mediaInfo;
@@ -81,7 +81,7 @@ namespace FFVideoConverter
             if (Environment.GetCommandLineArgs().Length > 1)
             {
                 string sourcePath = Environment.GetCommandLineArgs()[1];
-                string extension = Path.GetExtension(sourcePath);
+                string extension = Path.GetExtension(sourcePath).ToLowerInvariant();
                 if (Array.IndexOf(SUPPORTED_EXTENSIONS, extension) > -1)
                 {
                     mediaInfo = await MediaInfo.Open(sourcePath);
@@ -231,7 +231,7 @@ namespace FFVideoConverter
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 string[] paths = (string[])e.Data.GetData(DataFormats.FileDrop);
-                string extension = Path.GetExtension(paths[0]);
+                string extension = Path.GetExtension(paths[0]).ToLowerInvariant();
                 if (Array.IndexOf(SUPPORTED_EXTENSIONS, extension) > -1)
                 {
                     mediaInfo = await MediaInfo.Open(paths[0]);
