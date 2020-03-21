@@ -48,22 +48,11 @@ namespace FFVideoConverter
                 process.StartInfo.CreateNoWindow = true;
                 process.StartInfo.RedirectStandardOutput = true;
                 process.Start();
-
+                
                 await Task.Run(() =>
                 {
-                    while (process.StandardOutput.Peek() > -1)
-                    {
-                        string line = process.StandardOutput.ReadLine();
-                        stdoutBuilder.Append(line);
-                        if (line.Contains("probe_score")) //For some reason ffprobe sometimes hangs for 30-60 seconds before closing, so it's necessary to manually stop at the end of the output
-                        {
-                            break;
-                        }
-                    }
-
-                    stdoutBuilder.Remove(stdoutBuilder.Length - 1, 1);
-                    string stdout = stdoutBuilder.ToString();
-                    while (!BracketBalanced(stdout)) stdout += "}";
+                    process.WaitForExit();
+                    var stdout = process.StandardOutput.ReadToEnd();
 
                     using (JsonDocument jsonOutput = JsonDocument.Parse(stdout))
                     {
